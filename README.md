@@ -2,6 +2,45 @@ The R programming language is a favorite of data scientists for conducting stati
 
 For this article, we will be looking to ingest a large dataset via R, and then with the large dataset in place, we will run a variety of SQL queries to see what kind of information we can glean from the dataset. Lastly, because the R programming language excels at graphing our data, we will try to plot our results with gplot.
 
+## Getting Started 
+
+To follow along, you can clone the repo with the following:
+
+```bash
+$ git clone -b r_analysis git@github.com:griddbnet/Project.git
+```
+
+### Prerequisites
+
+You will need
+
+- GridDB
+- R 
+- An R IDE like [RStudio](https://www.rstudio.com/)
+
+### Sequence of Operations
+
+To run this you will need to accomplish the following: 
+
+1. Clone the repo
+2. Install the necessary libraries: 
+   - install.packages("RJDBC",dep=TRUE)
+   - install.packages("rJava")
+   - install.packages("hoopR")
+   - install.packages("nflreadr")
+   - install.packages("devtools", dep=TRUE)
+   - devtools::install_github("abresler/nbastatR")
+   - install.packages("devtools", dep=TRUE)
+   - install.packages(stringr)
+   - install.packages(dplyr)
+   - install.packages(ggplot2)
+   - install.packages(lubridate)
+   - install.packages(ggalt)
+
+3. Run the Ingest code (`ingest.R`)
+4. Run the querying code (`query.R`)
+
+
 ## Picking a Dataset
 
 Picking an extremely large dataset can lead us down many paths -- we are, after all, in the era of big data. For this article, we have opted to use go in a slightly-off-kilter direction: sports. Using the [hoopR](https://hoopr.sportsdataverse.org/index.html) library, we can ingest play-by-play data from all NBA seasons starting from 2002 until the most recent season. In this case, ingesting all of the seasons did not seem necessary, so we opted to simply ingest the latest season and conduct our analysis from there.
@@ -17,13 +56,13 @@ As mentioned before, we will utilize JDBC to connect to our server. Luckily, the
 To make the connection, we must of course import the appropriate library and then enter our credentials, including the [GridDB JDBC file](https://github.com/griddb/jdbc).
 
 ```R
-library(RJDBC)
+install.packages(RJDBC)
 
 drv <- JDBC("com.toshiba.mwcloud.gs.sql.Driver",
             "/usr/share/java/gridstore-jdbc-5.0.0.jar")
              #identifier.quote = "`")
 
-conn <- dbConnect(drv, "jdbc:gs://239.0.0.1:41999/defaultCluster/public", "admin", "admin")
+conn <- dbConnect(drv, "jdbc:gs://127.0.0.1:20001/myCluster/public", "admin", "admin")
 ```
 
 If all of your details are correct, the `conn` variable will now be a DBI connection to GridDB. With this done, we can move on to ingesting our dataset.
@@ -134,6 +173,10 @@ To start, let's try to get the count of step back attempts by both players. We f
 If we make the same query for James Harden I suspect we see a much smaller total, even though Harden is the player who popularized the move. Let's run this query: `select * from nba_pbp_2022  where shooting_play = 'TRUE' AND participants_0_athlete_id = '3992' AND type_id = '132' `. And sure enough, we get 349 results, with the last attempt being in a losing effort to the Miami Heat in game 6 of the Eastern Conference SemiFinals. 
 
 But what if instead of looking at total attempts, we wanted to know who **made** more shots of this type? To do so, we can simply add a score_value of 2 or greater in our query: `select * from nba_pbp_2022  where shooting_play = 'TRUE' AND participants_0_athlete_id = '3945274' AND type_id = '132' AND score_value >= 2 `. Once we run this query for both players, we see that Harden shot 122/349 on step back shots, while Luka shot 175/450, or better stated that Harden shot ~35% on step back shots compared to Luka's ~39% on higher volume; perhaps Luka is the new step back king!
+
+Here's what that chart looks like
+
+![/images/luka_stepbacks.png]
 
 ### Visualizing The Dataset
 

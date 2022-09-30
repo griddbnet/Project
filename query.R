@@ -5,7 +5,7 @@ drv <- JDBC("com.toshiba.mwcloud.gs.sql.Driver",
             "/usr/share/java/gridstore-jdbc-5.0.0.jar",
             identifier.quote = "`")
 
-conn <- dbConnect(drv, "jdbc:gs://239.0.0.1:41999/defaultCluster/public", "admin", "admin")
+conn <- dbConnect(drv, "jdbc:gs://127.0.0.1:20001/myCluster/public", "admin", "admin")
 
 #Type IDS:
 
