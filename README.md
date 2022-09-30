@@ -2,6 +2,15 @@ The R programming language is a favorite of data scientists for conducting stati
 
 For this article, we will be looking to ingest a large dataset via R, and then with the large dataset in place, we will run a variety of SQL queries to see what kind of information we can glean from the dataset. Lastly, because the R programming language excels at graphing our data, we will try to plot our results with gplot.
 
+## Table of Contents
+
+1. Getting Started
+2. Picking a Dataset
+3. Ingest Play-by-Play Data via hoopR
+4. Analyzing Play by Play Data
+5. Other Sorts Ideas for Analysis
+6. Conclusion
+
 ## Getting Started 
 
 To follow along, you can clone the repo with the following:
@@ -30,12 +39,11 @@ To run this you will need to accomplish the following:
    - install.packages("nflreadr")
    - install.packages("devtools", dep=TRUE)
    - devtools::install_github("abresler/nbastatR")
-   - install.packages("devtools", dep=TRUE)
-   - install.packages(stringr)
-   - install.packages(dplyr)
-   - install.packages(ggplot2)
-   - install.packages(lubridate)
-   - install.packages(ggalt)
+   - install.packages('stringr')
+   - install.packages('dplyr')
+   - install.packages('ggplot2')
+   - install.packages('lubridate')
+   - install.packages('ggalt')
 
 3. Run the Ingest code (`ingest.R`)
 4. Run the querying code (`query.R`)
@@ -56,7 +64,7 @@ As mentioned before, we will utilize JDBC to connect to our server. Luckily, the
 To make the connection, we must of course import the appropriate library and then enter our credentials, including the [GridDB JDBC file](https://github.com/griddb/jdbc).
 
 ```R
-install.packages(RJDBC)
+library(RJDBC)
 
 drv <- JDBC("com.toshiba.mwcloud.gs.sql.Driver",
             "/usr/share/java/gridstore-jdbc-5.0.0.jar")

@@ -23,5 +23,5 @@ out <- rbindlist_with_attrs(out)
 out$type_abbreviation <- NULL
 
 for (i in 1:nrow(out)) {
-  RJDBC::dbWriteTable(conn, "nba_2022", out[i, ], append = TRUE )
+  RJDBC::dbWriteTable(conn, "nba_pbp_2022", out[i, ], append = TRUE )
 }

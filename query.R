@@ -2,7 +2,7 @@ library(nbastatR)
 library(RJDBC)
 
 drv <- JDBC("com.toshiba.mwcloud.gs.sql.Driver",
-            "/usr/share/java/gridstore-jdbc-5.0.0.jar",
+            "/usr/share/java/gridstore-jdbc.jar",
             identifier.quote = "`")
 
 conn <- dbConnect(drv, "jdbc:gs://127.0.0.1:20001/myCluster/public", "admin", "admin")
@@ -39,7 +39,7 @@ conn <- dbConnect(drv, "jdbc:gs://127.0.0.1:20001/myCluster/public", "admin", "a
 #126,Layup Driving Reverse
 #110,Driving Layup Shot
 
-queryString <- "select coordinate_x, coordinate_y, score_value from hoopR_nba_pbp WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '3945274' AND type_id = '132'"
+queryString <- "select coordinate_x, coordinate_y, score_value from nba_2022 WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '3945274' AND type_id = '132'"
 
 rs <- dbGetQuery(conn, queryString )
 
