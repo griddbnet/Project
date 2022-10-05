@@ -41,6 +41,7 @@ print("Succesfully connected to GridDB")
 #126,Layup Driving Reverse
 #110,Driving Layup Shot
 
+# Create query string
 queryString <- "SELECT coordinate_x, coordinate_y, score_value from nba_pbp_2022 WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '3945274' AND type_id = '132'"
 
 rs <- dbGetQuery(conn, queryString )
@@ -51,14 +52,16 @@ library(ggplot2)
 library(lubridate)
 library(ggalt)
 
-
+# grab coordinates of basketball court drawing from ballr
 source("https://raw.githubusercontent.com/toddwschneider/ballr/master/plot_court.R")
 source("https://raw.githubusercontent.com/toddwschneider/ballr/master/court_themes.R")
 plot_court() # created the court_points object we need
 court_points <- court_points %>% mutate_if(is.numeric,~.*10)
 
+#mutate our coordinates from our query to match drawn court
 rs <- rs  %>%  mutate_if(is.numeric,~.*10)
 
+# draw everything
 DBcourt <- 
   ggplot(rs, aes(x=coordinate_x-250, y=coordinate_y+45)) + 
   scale_fill_manual(values = c("#00529b","#cc4b4b"),guide='none')+
