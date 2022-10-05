@@ -161,7 +161,6 @@ No  Name                  Type            CSTR  RowKey
 51  end_half_seconds_remaining  DOUBLE
 52  end_game_seconds_remaining  DOUBLE
 53  period                INTEGER
-54  type_abbreviation     STRING
 ```
 
 To show this information we used the [GridDB CLI's](https://github.com/griddb/cli) `showcontainer` command: `showcontainer nba_pbp_2022`.
@@ -176,15 +175,15 @@ To check if this is true, we can simply run a SQL query. To start, let's run thi
 
 ### Querying the Dataset
 
-To start, let's try to get the count of step back attempts by both players. We formulate our SQL query: `select * from nba_pbp_2022  where shooting_play = 'TRUE' AND participants_0_athlete_id = '3945274' AND type_id = '132' `. Here our query is finding all instances where Luka Doncic attempted a step back jump shot -- this includes both makes and misses. Running this query shows a blistering 450 attempts from Luka Doncic on step back jumpshots. Although please note that this dataset also includes all of the postseason which of course adds some volume to this metric as he made round 3 of the playoffs. 
+To start, let's try to get the count of step back attempts by both players. We formulate our SQL query: `SELECT COUNT(*) FROM nba_pbp_2022 WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '3945274' AND type_id = '132' `. Here our query is finding all instances where Luka Doncic attempted a step back jump shot -- this includes both makes and misses. Running this query shows a blistering 450 attempts from Luka Doncic on step back jumpshots. Although please note that this dataset also includes all of the postseason which of course adds some volume to this metric as he made round 3 of the playoffs. 
 
-If we make the same query for James Harden I suspect we see a much smaller total, even though Harden is the player who popularized the move. Let's run this query: `select * from nba_pbp_2022  where shooting_play = 'TRUE' AND participants_0_athlete_id = '3992' AND type_id = '132' `. And sure enough, we get 349 results, with the last attempt being in a losing effort to the Miami Heat in game 6 of the Eastern Conference SemiFinals. 
+If we make the same query for James Harden I suspect we see a much smaller total, even though Harden is the player who popularized the move. Let's run this query: `SELECT COUNT(*) FROM nba_pbp_2022  WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '3992' AND type_id = '132' `. And sure enough, we get 349 results, with the last attempt being in a losing effort to the Miami Heat in game 6 of the Eastern Conference SemiFinals. 
 
-But what if instead of looking at total attempts, we wanted to know who **made** more shots of this type? To do so, we can simply add a score_value of 2 or greater in our query: `select * from nba_pbp_2022  where shooting_play = 'TRUE' AND participants_0_athlete_id = '3945274' AND type_id = '132' AND score_value >= 2 `. Once we run this query for both players, we see that Harden shot 122/349 on step back shots, while Luka shot 175/450, or better stated that Harden shot ~35% on step back shots compared to Luka's ~39% on higher volume; perhaps Luka is the new step back king!
+But what if instead of looking at total attempts, we wanted to know who **made** more shots of this type? To do so, we can simply add a score_value of 2 or greater in our query: `SELECT COUNT(*) FROM nba_pbp_2022  WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '3945274' AND type_id = '132' AND score_value >= 2 `. Once we run this query for both players, we see that Harden shot 122/349 on step back shots, while Luka shot 175/450, or better stated that Harden shot ~35% on step back shots compared to Luka's ~39% on higher volume; perhaps Luka is the new step back king!
 
 Here's what that chart looks like
 
-![/images/luka_stepbacks.png]
+![](https://github.com/griddbnet/Project/blob/r_analysis/images/luka_stepbacks.png)
 
 ### Visualizing The Dataset
 
@@ -225,9 +224,41 @@ print(DBcourt)
 
 With this snippet of code, we are plotting our coordinates for all of Luka Doncic's step back jumpers. The makes will be in a brighter shade of blue, and the misses will be nearly black. Because it is 450 data points plotted onto a small court, it is a tad messy but you can get a feel of how he did throughout the season.
 
-## Other Sorts Ideas for Analysis
+## Other Sorts of Ideas for Analysis
 
 Of course, analyzing just step back jumpers is only a small sliver of what you can do with this much data at your disposal. You can, for example, also look at made shots in the 4th quarter to try to extrapolate "clutchness". Really, with this much data, the possibilities are limitless. 
+
+Here are some examples of simple shot charts you could make for different players. First, let's take a look at all of Steph Curry's made baskets for the season and then chart it:
+
+```R
+queryString <- "select coordinate_x, coordinate_y from nba_pbp_2022 WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '3975' AND score_value >= 2"
+```
+
+![](https://github.com/griddbnet/Project/blob/r_analysis/images/curry-made-shots.png)
+
+Or let's try it for Giannis Antetokounmpo: 
+
+```R
+queryString <- "select coordinate_x, coordinate_y from nba_pbp_2022 WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '3032977' AND score_value >= 2"
+```
+
+![](https://github.com/griddbnet/Project/blob/r_analysis/images/Giannis.png)
+
+Klay Thompson: 
+
+```R
+queryString <- "select coordinate_x, coordinate_y from nba_pbp_2022 WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '6475' AND score_value >= 2"
+```
+
+![](https://github.com/griddbnet/Project/blob/r_analysis/images/Klay.png)
+
+LeBron James: 
+
+```R
+queryString <- "select coordinate_x, coordinate_y from nba_pbp_2022 WHERE shooting_play = 'TRUE' AND participants_0_athlete_id = '1966' AND score_value >= 2"
+```
+
+![](https://github.com/griddbnet/Project/blob/r_analysis/images/lebron.png)
 
 ## Conclusion
 
